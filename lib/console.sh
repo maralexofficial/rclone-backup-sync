@@ -7,13 +7,13 @@ BLUE="\033[0;34m"
 CYAN="\033[0;36m"
 RESET="\033[0m"
 
-LOG_DIR="${HOME}/.rclone-backup-sync"
+LOG_DIR="${HOME}/logs"
 mkdir -p "$LOG_DIR"
 
 LOG_FILE="${LOG_FILE:-$LOG_DIR/app.log}"
 
 _write_log() {
-  echo "[$(date '+%F %T')] $1" >> "$LOG_FILE"
+  echo "[$(date '+%F %T')] $1" >>"$LOG_FILE"
 }
 
 log() {
