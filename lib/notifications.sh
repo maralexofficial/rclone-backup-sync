@@ -1,17 +1,17 @@
 load_provider() {
   case "${NOTIFY_TYPE:-}" in
     ntfy)
-      source "$(dirname "$0")/providers/ntfy.sh"
+      source "$(dirname "$0")/lib/providers/ntfy.sh"
       init_ntfy
       PROVIDER_SEND="ntfy_send"
       ;;
     smtp)
-      source "$(dirname "$0")/providers/smtp.sh"
+      source "$(dirname "$0")/lib/providers/smtp.sh"
       init_smtp
       PROVIDER_SEND="smtp_send"
       ;;
     discord)
-      source "$(dirname "$0")/providers/discord.sh"
+      source "$(dirname "$0")/lib/providers/discord.sh"
       init_discord
       PROVIDER_SEND="discord_send"
       ;;
