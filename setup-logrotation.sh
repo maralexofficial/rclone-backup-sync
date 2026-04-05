@@ -4,6 +4,21 @@ set -euo pipefail
 
 source "./lib/console.sh"
 
+FORCE=0
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+    --force)
+        FORCE=1
+        shift
+        ;;
+    *)
+        error "Unknown argument: $1"
+        exit 1
+        ;;
+    esac
+done
+
 LOGROTATE_BIN="$(command -v logrotate)"
 if [ -z "$LOGROTATE_BIN" ]; then
     error "logrotate not found."
