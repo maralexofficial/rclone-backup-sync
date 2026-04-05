@@ -20,8 +20,6 @@ else
     exit 1
 fi
 
-LOG_DIR="${LOG_DIR:-$HOME/.rclone-backup-sync}"
-
 LOGROTATE_DIR="${HOME}/.config/logrotate"
 CONFIG_FILE="${LOGROTATE_DIR}/logrotate.conf"
 STATUS_FILE="${LOGROTATE_DIR}/status"
