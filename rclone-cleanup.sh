@@ -1,7 +1,6 @@
 #!/bin/bash
 
 source "./lib/console.sh"
-source "./lib/notifications.sh"
 
 ENV_FILE=".env"
 
@@ -13,6 +12,8 @@ else
   error "Env file not found: $ENV_FILE"
   exit 1
 fi
+
+source "./lib/notifications.sh"
 
 echo "=== $(date '+%F %T') CLEANUP JOB START (AGE=$AGE) ===" >> "$LOG_FILE"
 

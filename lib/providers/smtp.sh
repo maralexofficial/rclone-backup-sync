@@ -1,6 +1,25 @@
 #!/bin/bash
 
-send_notification() {
+init_smtp() {
+  [ -z "${SMTP_TO:-}" ] && {
+    error "SMTP_TO not set"
+    return 1
+  }
+
+  [ -z "${SMTP_FROM:-}" ] && {
+    error "SMTP_FROM not set"
+    return 1
+  }
+
+  command -v mail >/dev/null 2>&1 || {
+    error "mail command not found"
+    return 1
+  }
+
+  warn "SMTP provider initialized"
+}
+
+smtp_send() {
   local title="$1"
   local message="$2"
   local priority="$3"

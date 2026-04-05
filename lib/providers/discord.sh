@@ -1,11 +1,24 @@
 #!/bin/bash
 
-send_notification() {
+init_discord() {
+  if [ -z "${DISCORD_WEBHOOK_URL:-}" ]; then
+    error "DISCORD_WEBHOOK_URL not set"
+    return 1
+  fi
+
+  command -v curl >/dev/null 2>&1 || {
+    error "curl not found"
+    return 1
+  }
+
+  info "Discord provider initialized"
+}
+
+discord_send() {
   local title="$1"
   local message="$2"
   local priority="$3"
   local tags="$4"
-
   local color=3066993
 
   if [ "$priority" -ge 5 ]; then
@@ -17,7 +30,7 @@ send_notification() {
   "embeds": [
     {
       "title": "$title",
-      "description": "$message\n\nTags: $tags"
+      "description": "$message\n\nTags: $tags",
       "color": $color,
       "footer": {
         "text": "[RCLONE-BACKUP-SYNC] github.com/maralexofficial"
@@ -28,8 +41,8 @@ send_notification() {
 EOF
 )
 
-  curl -s -H "Content-Type: application/json" \
-       -X POST \
-       -d "$payload" \
-       "$DISCORD_WEBHOOK_URL" > /dev/null
+  curl -H "Content-Type: application/json" \
+    -X POST \
+    -d "$payload" \
+    "$DISCORD_WEBHOOK_URL"
 }
