@@ -1,16 +1,16 @@
 #!/bin/bash
 
+set -euo pipefail
+
 source "./lib/console.sh"
 
 LOGROTATE_BIN="$(command -v logrotate)"
-
 if [ -z "$LOGROTATE_BIN" ]; then
     error "logrotate not found."
     exit 1
 fi
 
 ENV_FILE=".env"
-
 if [ -f "$ENV_FILE" ]; then
     set -a
     source "$ENV_FILE"
@@ -20,40 +20,25 @@ else
     exit 1
 fi
 
-LOGROTATE_DIR="${HOME}/.config/logrotate"
+LOG_DIR="${LOG_DIR:-$HOME/.rclone-backup-sync}"
 
+LOGROTATE_DIR="${HOME}/.config/logrotate"
 CONFIG_FILE="${LOGROTATE_DIR}/logrotate.conf"
 STATUS_FILE="${LOGROTATE_DIR}/status"
 
 USER_NAME="$(whoami)"
 success "Installing logrotate config for user: $USER_NAME"
 
-if [ -d "$LOGROTATE_DIR" ]; then
-    warn "Logrotate directory already exists: $LOGROTATE_DIR"
-
-    if ! confirm "Continue and reuse directory?"; then
-        info "Aborted by user"
-        exit 1
-    fi
-fi
-
 mkdir -p "$LOGROTATE_DIR"
-success "Logrotate directory created: $LOGROTATE_DIR"
+success "Logrotate directory ready: $LOGROTATE_DIR"
 
-if [ -f "$CONFIG_FILE" ]; then
-    warn "Logrotate config already exists: $CONFIG_FILE"
-
-    if ! confirm "Overwrite existing config?"; then
-        info "Skipping config creation"
-    else
-        CREATE_CONFIG=1
-    fi
-else
-    CREATE_CONFIG=1
+if [ -f "$CONFIG_FILE" ] && [ "${FORCE:-0}" -ne 1 ]; then
+    error "Config already exists: $CONFIG_FILE"
+    info "Use --force to overwrite"
+    exit 1
 fi
 
-if [ "${CREATE_CONFIG:-0}" -eq 1 ]; then
-    cat >"$CONFIG_FILE" <<EOF
+cat >"$CONFIG_FILE" <<EOF
 $LOG_DIR/*.log {
   daily
   rotate 7
@@ -64,8 +49,7 @@ $LOG_DIR/*.log {
 }
 EOF
 
-    success "Created logrotate config: $CONFIG_FILE"
-fi
+success "Created logrotate config: $CONFIG_FILE"
 
 success "Select logrotate schedule:"
 info "1) Daily at 03:00 (default)"
@@ -89,7 +73,16 @@ esac
 
 info "Using cron schedule: $CRON_SCHEDULE"
 
+CRON_JOB="$CRON_SCHEDULE $LOGROTATE_BIN -s $STATUS_FILE $CONFIG_FILE"
+
+(
+    crontab -l 2>/dev/null | grep -v "$CONFIG_FILE" || true
+    echo "$CRON_JOB"
+) | crontab -
+
+success "Cronjob installed"
+
 info "Running test logrotate..."
-/usr/sbin/logrotate -s "$STATUS_FILE" "$CONFIG_FILE"
+"$LOGROTATE_BIN" -s "$STATUS_FILE" "$CONFIG_FILE"
 
 success "Done ✅"
