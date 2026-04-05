@@ -15,25 +15,30 @@ fi
 
 source "./lib/notifications.sh"
 
-echo "=== $(date '+%F %T') BACKUP SYNC JOB START ===" >> "$LOG_FILE"
+info "$(date '+%F %T') Backup sync job started"
 
 rclone sync "$SRC" "$DEST/current" \
   --backup-dir "$ARCHIVE/$TS" \
-  --progress \
-  >> "$LOG_FILE" 2>&1
+  --progress 2>&1 | while IFS= read -r line; do
+    if [[ "$line" == *"ERROR"* ]]; then
+      error "$line"
+    elif [[ "$line" == *"WARN"* ]]; then
+      warn "$line"
+    fi
+  done
 
-RC=$?
+RC=${PIPESTATUS[0]}
 
 if [ $RC -eq 0 ]; then
-  MSG="Backup job on ${STORAGE_BOX} successful: $(date '+%F %T')"
+  MSG="Backup sync job on ${STORAGE_BOX} successful: $(date '+%F %T')"
   PRIO="3"
   STATUS="SUCCESS"
+  success "$MSG"
 else
-  MSG="Backup job on ${STORAGE_BOX} FAILED: $(date '+%F %T')"
+  MSG="Backup sync job on ${STORAGE_BOX} FAILED: $(date '+%F %T')"
   PRIO="5"
   STATUS="ERROR"
+  error "$MSG"
 fi
-
-echo "=== $(date '+%F %T') BACKUP SYNC JOB END ($STATUS) ===" >> "$LOG_FILE"
 
 notify "$TITLE_SYNC" "$MSG" "$PRIO" "$TAGS_SYNC"

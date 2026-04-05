@@ -15,24 +15,31 @@ fi
 
 source "./lib/notifications.sh"
 
-echo "=== $(date '+%F %T') CLEANUP JOB START (AGE=$AGE) ===" >> "$LOG_FILE"
+info "$(date '+%F %T') Cleanup job started"
 
 rclone delete "$ARCHIVE" --min-age "$AGE" \
-  --progress \
-  >> "$LOG_FILE" 2>&1
+  --progress 2>&1 | while IFS= read -r line; do
+    if [[ "$line" == *"ERROR"* ]]; then
+      error "$line"
+    elif [[ "$line" == *"WARN"* ]]; then
+      warn "$line"
+    else
+      info "$line"
+    fi
+  done
 
-RC=$?
+RC=${PIPESTATUS[0]}
 
 if [ $RC -eq 0 ]; then
   MESSAGE="Cleanup job successful on ${STORAGE_BOX}: $(date '+%F %T') (AGE=$AGE)"
   PRIO="3"
   STATUS="SUCCESS"
+  success "$MSG"
 else
   MESSAGE="Cleanup job FAILED on ${STORAGE_BOX}: $(date '+%F %T') (AGE=$AGE)"
   PRIO="5"
   STATUS="ERROR"
+  error "$MSG"
 fi
-
-echo "=== $(date '+%F %T') CLEANUP JOB END ($STATUS) ===" >> "$LOG_FILE"
 
 notify "$TITLE_CLEANUP" "$MESSAGE" "$PRIO" "$TAGS_CLEANUP"

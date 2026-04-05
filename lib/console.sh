@@ -7,22 +7,41 @@ BLUE="\033[0;34m"
 CYAN="\033[0;36m"
 RESET="\033[0m"
 
+LOG_DIR="${HOME}/.rclone-backup-sync"
+mkdir -p "$LOG_DIR"
+
+LOG_FILE="${LOG_FILE:-$LOG_DIR/app.log}"
+
+_write_log() {
+  echo "[$(date '+%F %T')] $1" >> "$LOG_FILE"
+}
+
 log() {
-  echo "[$(date '+%F %T')] $1"
+  local msg="$1"
+  echo "[$(date '+%F %T')] $msg"
+  _write_log "$msg"
 }
 
 info() {
-  echo -e "${CYAN}[INFO]${RESET} $1"
+  local msg="[INFO] $1"
+  echo -e "${CYAN}$msg${RESET}"
+  _write_log "$msg"
 }
 
 success() {
-  echo -e "${GREEN}[SUCCESS]${RESET} $1"
+  local msg="[SUCCESS] $1"
+  echo -e "${GREEN}$msg${RESET}"
+  _write_log "$msg"
 }
 
 warn() {
-  echo -e "${YELLOW}[WARN]${RESET} $1"
+  local msg="[WARN] $1"
+  echo -e "${YELLOW}$msg${RESET}"
+  _write_log "$msg"
 }
 
 error() {
-  echo -e "${RED}[ERROR]${RESET} $1"
+  local msg="[ERROR] $1"
+  echo -e "${RED}$msg${RESET}" >&2
+  _write_log "$msg"
 }
