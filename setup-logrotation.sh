@@ -68,7 +68,7 @@ EOF
 fi
 
 success "Select logrotate schedule:"
-info "1) Daily at 03:00 (default)"
+info "1) Daily at 03:00 (defaul)"
 info "2) Custom"
 
 read -r -p "Choice [1]: " CHOICE
