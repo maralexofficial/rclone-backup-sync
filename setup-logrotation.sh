@@ -69,8 +69,7 @@ fi
 
 success "Select logrotate schedule:"
 info "1) Daily at 03:00 (default)"
-info "2) Every hour"
-info "3) Custom"
+info "2) Custom"
 
 read -r -p "Choice [1]: " CHOICE
 CHOICE="${CHOICE:-1}"
@@ -80,9 +79,6 @@ case "$CHOICE" in
     CRON_SCHEDULE="0 3 * * *"
     ;;
 2)
-    CRON_SCHEDULE="0 * * * *"
-    ;;
-3)
     read -r -p "Enter cron expression (e.g. '*/15 * * * *'): " CRON_SCHEDULE
     ;;
 *)
