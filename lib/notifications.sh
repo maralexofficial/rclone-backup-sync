@@ -3,13 +3,13 @@
 load_provider() {
   case "$NOTIFY_TYPE" in
     ntfy)
-      source "$(dirname "$0")/providers/ntfy.sh"
+      source "$(dirname "$0")/lib/providers/ntfy.sh"
       ;;
     smtp)
-      source "$(dirname "$0")/providers/smtp.sh"
+      source "$(dirname "$0")/lib/providers/smtp.sh"
       ;;
     discord)
-      source "$(dirname "$0")/providers/discord.sh"
+      source "$(dirname "$0")/lib/providers/discord.sh"
       ;;
     *)
       echo "Unknown NOTIFY_TYPE: $NOTIFY_TYPE" >&2
