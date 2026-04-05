@@ -20,7 +20,30 @@ ntfy_send() {
   local priority="$3"
   local tags="$4"
 
-  "$NTFY" DEFAULT "$title" "$message" \
-    --prio="$priority" \
-    --tags="$tags"
+  local RC=1
+  local attempts=0
+  local max_attempts=3
+
+  while [ $attempts -lt $max_attempts ]; do
+    local topic="${NTFY_TOPIC:-DEFAULT}"
+
+    "$NTFY" "$topic" "$title" "$message" \
+      --prio="$priority" \
+      --tags="$tags"
+
+    RC=$?
+
+    if [ "$RC" -eq 0 ]; then
+      success "NTFY sent successfully"
+      return 0
+    fi
+
+    attempts=$((attempts + 1))
+    warn "NTFY failed (attempt $attempts/$max_attempts)"
+
+    sleep 1
+  done
+
+  error "NTFY failed after $max_attempts attempts"
+  return "$RC"
 }

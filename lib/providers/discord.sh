@@ -41,8 +41,35 @@ discord_send() {
 EOF
 )
 
-  curl -H "Content-Type: application/json" \
-    -X POST \
-    -d "$payload" \
-    "$DISCORD_WEBHOOK_URL"
+  [ -z "${DISCORD_WEBHOOK_URL:-}" ] && {
+    error "DISCORD_WEBHOOK_URL not set"
+    return 1
+  }
+
+  local RC=1
+  local attempts=0
+  local max_attempts=3
+
+  while [ $attempts -lt $max_attempts ]; do
+    curl -s \
+      -H "Content-Type: application/json" \
+      -X POST \
+      -d "$payload" \
+      "$DISCORD_WEBHOOK_URL"
+
+    RC=$?
+
+    if [ "$RC" -eq 0 ]; then
+      success "Discord notification sent"
+      return 0
+    fi
+
+    attempts=$((attempts + 1))
+    warn "Discord send failed (attempt $attempts/$max_attempts)"
+
+    sleep 2
+  done
+
+  error "Discord failed after $max_attempts attempts (exit code: $RC)"
+  return "$RC"
 }
