@@ -2,6 +2,8 @@
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+set -euo pipefail
+
 source "$SCRIPT_DIR/lib/console.sh"
 
 ENV_FILE="$SCRIPT_DIR/.env"
