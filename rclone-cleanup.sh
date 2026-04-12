@@ -1,6 +1,8 @@
 #!/bin/bash
 
-source "./lib/console.sh"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+source "$SCRIPT_DIR/lib/console.sh"
 
 ENV_FILE=".env"
 
@@ -13,7 +15,7 @@ else
   exit 1
 fi
 
-source "./lib/notifications.sh"
+source "$SCRIPT_DIR/lib/notifications.sh"
 
 info "$(date '+%F %T') Cleanup job started"
 
