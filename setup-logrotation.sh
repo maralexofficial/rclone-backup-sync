@@ -1,8 +1,10 @@
 #!/bin/bash
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 set -euo pipefail
 
-source "./lib/console.sh"
+source "$SCRIPT_DIR/lib/console.sh"
 
 FORCE=0
 
