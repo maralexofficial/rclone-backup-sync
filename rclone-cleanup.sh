@@ -35,15 +35,15 @@ rclone delete "$ARCHIVE" --min-age "$AGE" \
 RC=${PIPESTATUS[0]}
 
 if [ $RC -eq 0 ]; then
-  MESSAGE="Cleanup job successful on ${STORAGE_BOX}: $(date '+%F %T') (AGE=$AGE)"
+  MSG="Cleanup job successful on ${STORAGE_BOX}: $(date '+%F %T') (AGE=$AGE)"
   PRIO="3"
   STATUS="SUCCESS"
   success "$MSG"
 else
-  MESSAGE="Cleanup job FAILED on ${STORAGE_BOX}: $(date '+%F %T') (AGE=$AGE)"
+  MSG="Cleanup job FAILED on ${STORAGE_BOX}: $(date '+%F %T') (AGE=$AGE)"
   PRIO="5"
   STATUS="ERROR"
   error "$MSG"
 fi
 
-notify "$TITLE_CLEANUP" "$MESSAGE" "$PRIO" "$TAGS_CLEANUP"
+notify "$TITLE_CLEANUP" "$MSG" "$PRIO" "$TAGS_CLEANUP"
