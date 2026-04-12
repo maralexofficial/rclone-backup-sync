@@ -19,7 +19,7 @@ fi
 
 source "$SCRIPT_DIR/lib/notifications.sh"
 
-info "Rclone sync job started"
+info "Sync job started"
 
 rclone sync "$SRC" "$DEST/current" \
   --backup-dir "$ARCHIVE/$TS" \
@@ -34,14 +34,12 @@ done
 RC=${PIPESTATUS[0]}
 
 if [ $RC -eq 0 ]; then
-  MSG="Rclone sync job on ${STORAGE_BOX} successful."
+  MSG="Sync job on ${STORAGE_BOX} successful."
   PRIO="3"
-  STATUS="SUCCESS"
   success "$MSG"
 else
-  MSG="Rclone sync job on ${STORAGE_BOX} FAILED."
+  MSG="Sync job on ${STORAGE_BOX} FAILED."
   PRIO="5"
-  STATUS="ERROR"
   error "$MSG"
 fi
 

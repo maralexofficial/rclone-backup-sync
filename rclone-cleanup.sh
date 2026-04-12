@@ -19,30 +19,28 @@ fi
 
 source "$SCRIPT_DIR/lib/notifications.sh"
 
-info "$(date '+%F %T') Cleanup job started"
+info "Cleanup job started"
 
 rclone delete "$ARCHIVE" --min-age "$AGE" \
   --progress 2>&1 | while IFS= read -r line; do
-    if [[ "$line" == *"ERROR"* ]]; then
-      error "$line"
-    elif [[ "$line" == *"WARN"* ]]; then
-      warn "$line"
-    else
-      info "$line"
-    fi
-  done
+  if [[ "$line" == *"ERROR"* ]]; then
+    error "$line"
+  elif [[ "$line" == *"WARN"* ]]; then
+    warn "$line"
+  else
+    info "$line"
+  fi
+done
 
 RC=${PIPESTATUS[0]}
 
 if [ $RC -eq 0 ]; then
-  MSG="Cleanup job successful on ${STORAGE_BOX}: $(date '+%F %T') (AGE=$AGE)"
+  MSG="Cleanup job on ${STORAGE_BOX} (age=$AGE) successful."
   PRIO="3"
-  STATUS="SUCCESS"
   success "$MSG"
 else
-  MSG="Cleanup job FAILED on ${STORAGE_BOX}: $(date '+%F %T') (AGE=$AGE)"
+  MSG="Cleanup job on ${STORAGE_BOX} (age=$AGE) FAILED."
   PRIO="5"
-  STATUS="ERROR"
   error "$MSG"
 fi
 
