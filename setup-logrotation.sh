@@ -38,7 +38,7 @@ else
 fi
 
 LOGROTATE_DIR="${HOME}/.config/logrotate"
-CONFIG_FILE="${LOGROTATE_DIR}/logrotate.conf"
+CONFIG_FILE="${LOGROTATE_DIR}/rclone_backup_sync.conf"
 STATUS_FILE="${LOGROTATE_DIR}/status"
 
 USER_NAME="$(whoami)"
