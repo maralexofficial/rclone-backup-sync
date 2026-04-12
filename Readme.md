@@ -9,10 +9,11 @@
 * [License](#license)
 
 # Preface
---
+I’ve done my best as always, but please keep in mind that the primary purpose of this script is private use. If you find any issues, feel free to open an issue anytime 🙂
 
 # About this repo
---
+This repository contains a simple rclone-based backup sync tool. It’s designed to automate the process of syncing backups to a remote storage and keeping everything organized over time.
+The script takes care of uploading backups via rclone and also includes cleanup logic to prevent storage from filling up with old files. It’s mainly meant to reduce manual work and make backup handling more consistent and reliable.
 
 # Quick overview
 --
