@@ -19,27 +19,27 @@ fi
 
 source "$SCRIPT_DIR/lib/notifications.sh"
 
-info "$(date '+%F %T') Backup sync job started"
+info "Rclone sync job started"
 
 rclone sync "$SRC" "$DEST/current" \
   --backup-dir "$ARCHIVE/$TS" \
   --progress 2>&1 | while IFS= read -r line; do
-    if [[ "$line" == *"ERROR"* ]]; then
-      error "$line"
-    elif [[ "$line" == *"WARN"* ]]; then
-      warn "$line"
-    fi
-  done
+  if [[ "$line" == *"ERROR"* ]]; then
+    error "$line"
+  elif [[ "$line" == *"WARN"* ]]; then
+    warn "$line"
+  fi
+done
 
 RC=${PIPESTATUS[0]}
 
 if [ $RC -eq 0 ]; then
-  MSG="Backup sync job on ${STORAGE_BOX} successful: $(date '+%F %T')"
+  MSG="Rclone sync job on ${STORAGE_BOX} successful."
   PRIO="3"
   STATUS="SUCCESS"
   success "$MSG"
 else
-  MSG="Backup sync job on ${STORAGE_BOX} FAILED: $(date '+%F %T')"
+  MSG="Rclone sync job on ${STORAGE_BOX} FAILED."
   PRIO="5"
   STATUS="ERROR"
   error "$MSG"
